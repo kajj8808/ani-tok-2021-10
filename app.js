@@ -4,13 +4,13 @@ import { getWeekAnissia } from "./anissia";
 
 const client = new WebhookClient({ id: ID, token: TOKEN });
 
-const embed = ({ subject, website, image, captionCount, desciption }) =>
+const embed = ({ subject, website, image, captionCount, desciption, time }) =>
   new MessageEmbed()
     .setColor("#f2f2f2")
     .setTitle(subject)
     .setURL(website)
     .setImage(image)
-    .setDescription(`${subject}-${captionCount}화\n${desciption}`)
+    .setDescription(`${subject} [${captionCount}화] -${time}\n${desciption}`)
     .setTimestamp()
     .setFooter(
       "namuneulbo#1144",
