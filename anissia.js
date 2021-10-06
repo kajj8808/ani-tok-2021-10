@@ -16,33 +16,47 @@ export const getWeekAnissia = async () => {
     week = date.getDate();
     aniList = data;
   }
-  aniList.forEach(async (aniData) => {
+
+  const getDetail = async (website) => {
+    let image = "";
+    let desciption = "";
+
+    try {
+      const {
+        result: {
+          ogImage: { url },
+          ogDescription,
+        },
+      } = await ogs({ url: website }).catch((err) => err);
+      image = url;
+      desciption = ogDescription;
+    } catch (error) {
+      image = noneImage;
+      desciption = "None desciption";
+    }
+
+    return { image, desciption };
+  };
+
+  for (const aniData of aniList) {
     const { time, status, subject, website, captionCount } = aniData;
 
-    const nowHour = date.getHours();
-    const nowMinute = date.getMinutes();
+    let nowHour = date.getHours() - 1; //hour 이 0~23 이라.
+    let nowMinute = date.getMinutes();
     const aniTime = time.split(":");
     const hour = Number(aniTime[0]);
     const minute = Number(aniTime[1]);
 
-    if (nowHour === hour && nowMinute - 5 === minute - 5 && status === "ON") {
-      let image = "";
-      let desciption = "";
-      try {
-        const {
-          result: {
-            ogImage: { url },
-            ogDescription,
-          },
-        } = await ogs({ url: website }).catch((err) => err);
-        image = url;
-        desciption = ogDescription;
-      } catch (error) {
-        image = noneImage;
-        desciption = "None desciption";
-      }
-      result.push({ subject, website, image, captionCount, desciption });
+    if (nowMinute >= 60) {
+      nowHour = nowHour + 1 >= 24 ? 0 : nowHour + 1;
+      nowMinute = (nowMinute += 5) - 60;
     }
-  });
-  return result;
+
+    if (nowHour === hour && nowMinute + 5 === minute && status === "ON") {
+      const { image, desciption } = await getDetail(website);
+      console.log(image, desciption);
+      result.push({ subject, website, image, captionCount, desciption });
+      return result;
+    }
+  }
 };

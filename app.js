@@ -19,7 +19,8 @@ const embed = ({ subject, website, image, captionCount, desciption }) =>
 
 const main = async () => {
   const results = await getWeekAnissia();
-  if (results[0] !== undefined) {
+  console.log(results);
+  if (results !== undefined) {
     results.forEach((item) => {
       client.send({
         username: "ani bot",
